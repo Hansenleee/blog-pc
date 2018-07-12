@@ -32,7 +32,9 @@
       height: 100%;
       background: url('~assets/images/app-info.png');
       background-size: cover;
-      background-position: center top;
+      background-position: left top;
+      animation: infoAnimate 10s linear 1 alternate forwards;
+
 
       &:before {
         position: absolute;
@@ -106,6 +108,16 @@
       height: 100%;
       background: #fff;
       overflow: hidden;
+    }
+  }
+
+  @keyframes infoAnimate {
+    0% {
+      background-position: left top
+    }
+
+    100% {
+      background-position: center top
     }
   }
 </style>

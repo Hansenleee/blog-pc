@@ -1,17 +1,19 @@
 <template>
   <div class="home-page">
     <div class="articles">
-      <div v-for="article in articles" :key="article.id" class="article-item">
-        <h2 class="title">
-          <router-link :to="{name: 'article-detail', params: { id: article.id}}">{{ article.title }}</router-link>
-        </h2>
-        <p class="desciption">{{ article.desciption }}</p>
-        <div class="info">
-          <span>{{ `${article.date}000` | dateFilter }}</span>
-          <span class="spot"> • </span>
-          <a href="#" class="category">{{ article.cate_name }}</a>
+      <transition-group name="list">
+        <div v-for="article in articles" :key="article.id" class="article-item">
+          <h2 class="title">
+            <router-link :to="{name: 'article-detail', params: { id: article.id}}">{{ article.title }}</router-link>
+          </h2>
+          <p class="desciption">{{ article.desciption }}</p>
+          <div class="info">
+            <span>{{ `${article.date}000` | dateFilter }}</span>
+            <span class="spot"> • </span>
+            <a href="#" class="category">{{ article.cate_name }}</a>
+          </div>
         </div>
-      </div>
+      </transition-group>
       <pagination
         :currentPage="page.currentPage"
         :totalPages="totalPages"
@@ -129,5 +131,12 @@
         }
       }
     }
+  }
+  .list-enter-active, .list-leave-active {
+    transition: all 1s;
+  }
+  .list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translateY(-30px);
   }
 </style>

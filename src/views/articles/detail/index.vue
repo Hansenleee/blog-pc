@@ -7,11 +7,14 @@
       <a href="#" class="category">{{ article.cate_name }}</a>
     </div>
     <div class="content" v-if="article.content">
-      <vue-markdown :source="article.content"></vue-markdown>
+      <vue-markdown
+        :source="article.content"></vue-markdown>
     </div>
   </div>
 </template>
 <script type="text/babel">
+  import Prism from 'prismjs'
+
   export default {
     data() {
       return {
@@ -40,6 +43,11 @@
         return this.$axios.get(`/articles/${this.$route.params.id}`)
           .then((res) => {
             this.article = res.result
+
+            this.$nextTick(() => {
+              // 利用prism高亮
+              Prism.highlightAll()
+            })
           })
       },
     },
@@ -87,14 +95,16 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .content {
     & code {
-      background: #f6f8fa;
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
+      padding: 2px 4px;
+      font-size: 90%;
+      color: #c7254e;
+      background-color: #f9f2f4;
+      border-radius: 4px;
     }
 
-    & pre {
-      padding: 16px;
-      background: #f6f8fa;
+    & a {
+      color: #337ab7;
+      text-decoration: none;
     }
   }
 </style>
