@@ -4,7 +4,7 @@
       <transition-group name="list">
         <div v-for="article in articles" :key="article.id" class="article-item">
           <h2 class="title">
-            <router-link :to="{name: 'article-detail', params: { id: article.id}}">{{ article.title }}</router-link>
+            <a @click="handleGoDetail(article)">{{ article.title }}</a>
           </h2>
           <p class="desciption">{{ article.desciption }}</p>
           <div class="info">
@@ -19,9 +19,23 @@
         :totalPages="totalPages"
         @onChange="handlePageChange"/>
     </div>
+    <modal
+      :visible="modal.visible"
+      title="查看文章请输入密码"
+      @onClose="handleOnClose"
+      @onOk="handleOnOk">
+      <template>
+        <div class="password">
+          <input type="password" placeholder="文章查看密码" v-model="modal.password"/>
+        </div>
+        <p class="password__err">{{ modal.err }}</p>
+      </template>
+    </modal>
   </div>
 </template>
 <script type="text/babel">
+  import md5 from 'md5'
+
   export default {
     data() {
       return {
@@ -30,6 +44,12 @@
           currentPage: 1,
           pageSize: 10,
           totalCount: 10,
+        },
+        modal: {
+          visible: false,
+          password: '',
+          record: {},
+          err: '',
         },
       }
     },
@@ -72,6 +92,51 @@
        */
       handlePageChange(page) {
         this.fetch(page)
+      },
+      /**
+       *  进入详情
+       * @param {Object} article - 文章详情
+       */
+      handleGoDetail(article) {
+        if (article.type === '2') {
+          this.modal.visible = true
+          this.modal.record = article
+          this.modal.err = ''
+        } else {
+          this.$router.push({
+            name: 'article-detail',
+            params: {
+              id: article.id,
+            },
+          })
+        }
+      },
+      /**
+       * 关闭modal
+       */
+      handleOnClose() {
+        this.modal.visible = false
+      },
+      /**
+       * modal确认
+       */
+      handleOnOk() {
+        this.$axios.get(`/articles/${this.modal.record.id}/password/${this.modal.password}`)
+          .then(() => {
+            this.$router.push({
+              name: 'article-detail',
+              params: {
+                id: this.modal.record.id,
+              },
+              query: {
+                p: md5(this.modal.password),
+              },
+            })
+            this.handleOnClose()
+          })
+          .catch((err) => {
+            this.modal.err = err.message
+          })
       },
     },
   }
@@ -138,5 +203,23 @@
   .list-enter, .list-leave-to {
     opacity: 0;
     transform: translateY(-30px);
+  }
+  .password {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+
+    & > input {
+      width: 100%;
+      border-radius: 4px;
+      outline: none;
+      border: 0;
+    }
+  }
+  .password__err {
+    margin: 10px 0 0 0;
+    color: #f5222d;
+    font-size: 14px;
   }
 </style>

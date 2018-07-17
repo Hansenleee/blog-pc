@@ -40,7 +40,11 @@
        * @return {Promise} 返回promise
        */
       fetch() {
-        return this.$axios.get(`/articles/${this.$route.params.id}`)
+        return this.$axios.get(`/articles/${this.$route.params.id}`, {
+          params: {
+            password: this.$route.query.p,
+          },
+        })
           .then((res) => {
             this.article = res.result
 
@@ -105,6 +109,10 @@
     & a {
       color: #337ab7;
       text-decoration: none;
+    }
+
+    & img {
+      max-width: 100%;
     }
   }
 </style>
