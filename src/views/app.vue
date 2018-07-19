@@ -5,7 +5,12 @@
         <div class="user-logo">
           <div/>
         </div>
-        <h1>李滨 & 聂鹏的技术博客</h1>
+        <h1>
+          <a href="https://github.com/Hansenleee">李滨</a>
+           & 
+          <a href="https://github.com/MailKiller">聂鹏</a>
+           的博客
+        </h1>
         <p>浮生若梦，一曲折烟</p>
       </div>
     </div>
@@ -72,6 +77,15 @@
           font-size: 28px;
           margin: 30px 0 50px;
           overflow: hidden;
+
+          & a {
+            text-decoration: none;
+            color: #fff;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
         }
 
         & > p {

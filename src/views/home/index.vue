@@ -1,5 +1,8 @@
 <template>
   <div class="home-page">
+    <header v-show="categoryName">
+      {{ categoryName }}
+    </header>
     <div class="articles">
       <transition-group name="list">
         <div v-for="article in articles" :key="article.id" class="article-item">
@@ -10,7 +13,11 @@
           <div class="info">
             <span>{{ `${article.date}000` | dateFilter }}</span>
             <span class="spot"> • </span>
-            <a href="#" class="category">{{ article.cate_name }}</a>
+            <router-link
+              class="category"
+              :to="{name: 'home', query: {categoryId: article.cate_line_id}}">
+              {{ article.cate_name }}
+            </router-link>
           </div>
         </div>
       </transition-group>
@@ -61,6 +68,19 @@
       totalPages() {
         return Math.ceil(this.page.totalCount / this.page.pageSize)
       },
+      /**
+       * 当前分类
+       * @return {Stirng} 分类名称
+       */
+      categoryName() {
+        const categoryId = this.$route.query.categoryId
+
+        if (!categoryId || this.articles.length === 0) {
+          return ''
+        }
+
+        return this.articles[0].cate_name || ''
+      },
     },
     created() {
       this.fetch(1)
@@ -76,6 +96,7 @@
           params: {
             currentPage: page,
             pageSize: this.page.pageSize,
+            categoryId: this.$route.query.categoryId || 0,
           },
         })
           .then((res) => {
@@ -139,6 +160,14 @@
           })
       },
     },
+    watch: {
+      /**
+       * 监听路由
+       */
+      $route() {
+        this.fetch()
+      },
+    },
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
@@ -146,6 +175,14 @@
     height: 100%;
     padding: 50px 8%;
     overflow: auto;
+
+    & header {
+      padding: 20px 0;
+      font-size: 36px;
+      font-weight: bold;
+      color: #000;
+      border-bottom: 1px solid #ddd;
+    }
 
     & .articles {
       
